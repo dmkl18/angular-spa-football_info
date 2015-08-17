@@ -1,0 +1,229 @@
+<div class="container dlc-main-container">
+    <div class="row" ng-show="isClub()">
+        <div ng-hide="positions.isMistake" class="col-sm-6">
+            <button type="button" class="btn btn-default-dlc"
+                    ng-click="addPlayer()" ng-hide="actions.isActionProcess"
+                    bs-tooltip title="Push to add player" data-placement="right">
+                <i class="fa fa-plus"></i>&nbsp;Add player
+            </button>
+        </div>
+        <div class="col-sm-6">
+            <p class="text-right">
+                <a href="#/country/{{club.country|urlLike}}/teams/{{club.name|urlLike}}" class="btn btn-warning">Team</a>
+            </p>
+        </div>
+    </div>
+    <h3>{{club.name}}</h3>
+    <h4>Players of the team</h4>
+    <div class="dlc-main-load" ng-show="preparePlayers.showLoading">
+        <div class="text-center text-primary">
+            <i class="fa fa-cog fa-spin fa-3x"></i>
+        </div>
+    </div>
+    <div ng-show="preparePlayers.isEmpty">
+        <p class="alert alert-warning" ng-bind="preparePlayers.emptyMessage"></p>
+    </div>
+    <div>
+        <div ng-show="positions.isMistake">
+            <p class="alert alert-danger">Sorry, but now you can not add or remove players. Try to reload the page</p>
+        </div>
+        <div class="dlc-slide-animation" ng-show="actions.isNeedToShowForm" data-slide-time="350" ng-controller="PlayerActionController">
+            <div>
+                <p id="formMessage"></p>
+                <p ng-show="addProcess.beforeSendMistake" class="alert alert-warning">Вы должны правильно заполнить все обязательные поля</p>
+            </div>
+            <div>
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h4>Enter an information about player:</h4>
+                    </div>
+                    <div class="panel-body">
+                        <form name="addForm" reactive-form ng-submit="actionPlayer(addForm)"
+                              data-message-box="#formMessage" data-err-block-class="help-block-error"
+                              data-action-type="addProcess.actionType" data-action-result="addProcess.actionResult" data-clear-form="!actions.isNeedToShowForm">
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group" touched-field-view="playerName" data-err-block-class="help-block-error">
+                                        <div>
+                                            <label for="addPlayerName" class="control-label">Name</label>
+                                        </div>
+                                        <div>
+                                            <input type="text" id="addPlayerName" name="playerName" ng-model="playerToAdd.name" class="form-control" placeholder="Name"
+                                                   ng-model-options="{ updateOn: 'blur' }" ng-pattern="/^[a-z][a-z.]+(\s[a-z][a-z.]+)*$/i" required />
+                                        </div>
+                                        <div class="help-block help-block-error">
+                                            <p ng-show="addForm.playerName.$error.pattern">The name of the player must begin with a letter and may include characters, dots, spaces</p>
+                                            <p ng-show="addForm.playerName.$error.required">The field is required</p>
+                                        </div>
+                                    </div>
+                                    <div ng-if="addProcess.redacting" class="form-group" touched-field-view="playerClub" data-err-block-class="help-block-error" data-check-ajax-view="true">
+                                        <div>
+                                            <label for="addPlayerClub" class="control-label">Club</label>
+                                        </div>
+                                        <div>
+                                            <input type="text" id="addPlayerClub" name="playerClub" class="form-control" ng-model="playerToAdd.clubValue" placeholder="Player club"
+                                                   ng-model-options="{ updateOn: 'blur' }" ng-pattern="/^[a-z]+[a-z0-9]*(\s[a-z0-9]+)*$/i" required
+                                                   club-of-player-autocomplete="chooseClubSettings.selectedData" data-country="chooseClubSettings.priorityCountry" data-on-select="showClub(data)" />
+                                        </div>
+                                        <div class="help-block help-block-error">
+                                            <p ng-show="addForm.playerClub.$error.clubOfPlayerAutocomplete">Sorry, but there is no such club. You have to add club at first and then you can add players to the club</p>
+                                            <p ng-show="addForm.playerClub.$error.pattern">The name of the club must begin with a letter and may include characters, numbers, spaces</p>
+                                            <p ng-show="addForm.playerClub.$error.required">The field is required</p>
+                                        </div>
+                                    </div>
+                                    <div class="form-group" touched-field-view="playerPosition" data-err-block-class="help-block-error">
+                                        <div>
+                                            <label for="addPlayerPosition" class="control-label">Position</label>
+                                        </div>
+                                        <div>
+                                            <select id="addPlayerPosition" name="playerPosition" ng-model="playerToAdd.positionId" class="form-control" required >
+                                                <option ng-repeat="position in $parent.positions.values" value="{{position.id}}">{{position.name}}</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group" touched-field-view="playerAge" data-err-block-class="help-block-error">
+                                        <div>
+                                            <label for="addPlayerAge" class="control-label">Age</label>
+                                        </div>
+                                        <div>
+                                            <input type="number" id="addPlayerAge" name="playerAge" class="form-control" ng-model="playerToAdd.age" placeholder="Age"
+                                                   ng-model-options="{ updateOn: 'blur' }" min="{{baseFormSettings.minAge}}" max="{{baseFormSettings.maxAge}}" dlc-number="integer" required />
+                                        </div>
+                                        <div class="help-block help-block-error">
+                                            <p ng-show="addForm.playerAge.$error.required">The field is required</p>
+                                            <p ng-show="addForm.playerAge.$error.min">You can not add players who are younger then {{baseFormSettings.minAge}}</p>
+                                            <p ng-show="addForm.playerAge.$error.max">This player is too old to play in the professional football. His age must be less than {{baseFormSettings.maxAge}}</p>
+                                            <p ng-show="addForm.playerAge.$error.number">It must be integer</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group" touched-field-view="playerGoals" data-err-block-class="help-block-error">
+                                        <div>
+                                            <label for="addPlayerGoals" class="control-label">Goals</label>
+                                        </div>
+                                        <div>
+                                            <input type="number" id="addPlayerGoals" name="playerGoals" class="form-control" ng-model="playerToAdd.goals" placeholder="Goals" required
+                                                   ng-model-options="{ updateOn: 'blur' }" min="{{baseFormSettings.minGoals}}" max="{{baseFormSettings.maxGoals}}" dlc-number="integer" />
+                                        </div>
+                                        <div class="help-block help-block-error">
+                                            <p ng-show="addForm.playerGoals.$error.required">The field is required</p>
+                                            <p ng-show="addForm.playerGoals.$error.min">Minimum is {{baseFormSettings.minGoals}}</p>
+                                            <p ng-show="addForm.playerGoals.$error.max">It is too many goals. It must be less than {{baseFormSettings.maxGoals}}</p>
+                                            <p ng-show="addForm.playerGoals.$error.number">It must be integer</p>
+                                        </div>
+                                    </div>
+                                    <div class="form-group" touched-field-view="playerPasses" data-err-block-class="help-block-error">
+                                        <div>
+                                            <label for="addPlayerPasses" class="control-label">Passes</label>
+                                        </div>
+                                        <div>
+                                            <input type="number" id="addPlayerPasses" name="playerPasses" class="form-control" ng-model="playerToAdd.passes" placeholder="Passes" required
+                                                   ng-model-options="{ updateOn: 'blur' }" min="{{baseFormSettings.minPasses}}" max="{{baseFormSettings.maxPasses}}" dlc-number="integer"  />
+                                        </div>
+                                        <div class="help-block help-block-error">
+                                            <p ng-show="addForm.playerPasses.$error.required">The field is required</p>
+                                            <p ng-show="addForm.playerPasses.$error.min">Minimum is {{baseFormSettings.minPasses}}</p>
+                                            <p ng-show="addForm.playerPasses.$error.max">It is too many passes. It must be less than {{baseFormSettings.maxPasses}}</p>
+                                            <p ng-show="addForm.playerPasses.$error.number">It must be integer</p>
+                                        </div>
+                                    </div>
+                                    <div class="form-group" touched-field-view="playerRating" data-err-block-class="help-block-error">
+                                        <div>
+                                            <label for="addPlayerRating" class="control-label">Rating</label>
+                                        </div>
+                                        <div>
+                                            <input type="text" id="addPlayerRating" name="playerRating" class="form-control" ng-model="playerToAdd.rating" placeholder="Rating" required
+                                                   ng-model-options="{ updateOn: 'blur' }" min="{{baseFormSettings.minRating}}" max="{{baseFormSettings.maxRating}}" dlc-number="float"  />
+                                        </div>
+                                        <div class="help-block help-block-error">
+                                            <p ng-show="addForm.playerRating.$error.required">The field is required</p>
+                                            <p ng-show="addForm.playerRating.$error.min">Minimum is {{baseFormSettings.minRating}}</p>
+                                            <p ng-show="addForm.playerRating.$error.max">Rating can not be more than {{baseFormSettings.maxRating}}</p>
+                                            <p ng-show="addForm.playerRating.$error.number">It must be float</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-xs-12">
+                                    <div>
+                                        <p class="text-info"><span class="text-danger">*&nbsp;</span>All fields are required</p>
+                                    </div>
+                                    <div class="form-group text-center">
+                                        <div ng-hide="addProcess.isActionForm">
+                                            <button class="btn btn-default-dlc">Go</button>
+                                            <button type="button" class="btn btn-danger" ng-click="clearPlayerForm()">Cancel</button>
+                                        </div>
+                                        <div ng-show="addProcess.isActionForm" class="text-center text-primary">
+                                            <i class="fa fa-cog fa-spin fa-3x"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div ng-show="preparePlayers.isResult" actions-grid-view=".panel.player-panel" data-click-selector=".panel .player-buttons button" data-end-action="actions.isActionProcess">
+            <div ng-repeat="playerPosition in players" back-to-top-bottom="400" data-selector-class="btn-redact" data-delay="300">
+                <h4 ng-bind="playerPosition.positionName" class="position-header"></h4>
+                <div ng-repeat="players in playerPosition.data" class="row">
+                    <div ng-repeat="player in players" class="col-sm-6 col-md-3">
+                        <div class="panel panel-primary player-panel">
+                            <div class="panel-heading">
+                                <h4 class="panel-title" ng-bind="player.name"></h4>
+                                <div ng-hide="actions.isActionProcess" class="player-buttons">
+                                    <button ng-hide="positions.isMistake" class="btn btn-default btn-xs btn-redact" ng-click="redactPlayer(player, $index)">
+                                        <i class="fa fa-pencil"></i>
+                                    </button>
+                                    <button class="btn btn-danger btn-xs" ng-click="confirmingDeletionPlayer(player, $index)">
+                                        <i class="fa fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="panel-body">
+                                <p>Position: <span class="text-info" ng-bind="player.position"></span></p>
+                                <p>Age: <span class="text-info" ng-bind="player.age"></span></p>
+                                <p>Goals: <span class="text-info" ng-bind="player.goals"></span></p>
+                                <p>Passes: <span class="text-info" ng-bind="player.passes"></span></p>
+                                <p>Rating: <span class="text-info" ng-bind="player.rating"></span></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal window -->
+        <dlc-modal data-show="confirmingDeleteWindow.isShown" class="ng-hide" data-modal-title="Confirm the deletion of the player" data-close="cancelDeletingPlayer()">
+            <p>Do you really want to delete this player?</p>
+            <div class="modal-buttons">
+                <div ng-hide="clubActions.isDeletingProcess">
+                    <button type="button" ng-click="deletePlayer()" class="btn btn-default btn-sm">
+                        <i class="fa fa-check"></i>&nbsp;
+                        OK
+                    </button>
+                    <button type="button" ng-click="cancelDeletingPlayer()" class="btn btn-danger btn-sm">
+                        <i class="fa fa-times"></i>&nbsp;
+                        Cancel
+                    </button>
+                </div>
+                <div ng-show="actions.isDeletingProcess">
+                    <div ng-class="{loading: true, active: actions.isDeletingProcess}">
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                    </div>
+                </div>
+            </div>
+        </dlc-modal>
+    </div>
+    <div ng-show="preparePlayers.isMistake">
+        <p class="alert alert-danger" ng-bind="preparePlayers.mistakeMessage"></p>
+    </div>
+</div>

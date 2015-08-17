@@ -1,0 +1,53 @@
+<div class="container dlc-main-container">
+    <h2>Welcome</h2>
+    <div class="row">
+        <div class="col-sm-9 col-md-10">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="bg-inverse-dlc dlc-main-info-bl">
+                        <h4>Information about team</h4>
+                        <p>
+                            You can create an information about any team that you want.
+                            You can see a table of the championship of the country.
+                        </p>
+                        <p>You can see such information as:</p>
+                        <ul>
+                            <li>golas</li>
+                            <li>wins</li>
+                            <li>goals scored</li>
+                            <li>total points</li>
+                            <li>etc.</li>
+                        </ul>
+                        <p>You can also redact any information that you want</p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="bg-primary additional-info-bl">
+                        <h4>Information about players</h4>
+                        <p>
+                            You can see an information about players of the club that you have selected.
+                        </p>
+                        <p>
+                            Also you can see an information about top scorers of the championship that you have selected.
+                        </p>
+                        <p>
+                            Another good information is that you can change an information about players such as age, rating, etc.
+                            Also you can make transfers of players.
+                            To see players that are free now you can go
+                            <a href="#/players/free" class="dlc-link dlc-link-inverse">here</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3 col-md-2">
+            <div class="preview-country-container">
+                <div ng-repeat="country in countries.values | limitTo:3" class="preview-country-bl">
+                    <p class="preview-country-info">
+                        <a href="#/country/{{country.name}}" ng-bind="country.name"></a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

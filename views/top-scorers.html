@@ -1,0 +1,205 @@
+<div class="container dlc-main-container">
+    <div ng-show="topScorers.showLoading" class="dlc-main-load">
+        <p class="text-center text-primary">
+            <i class="fa fa-cog fa-spin fa-3x"></i>
+        </p>
+    </div>
+    <div class="row">
+        <div class="col-md-offset-1 col-sm-10">
+            <div ng-show="country.showLoading">
+                <p class="text-center text-primary">
+                    <i class="fa fa-cog fa-spin fa-3x"></i>
+                </p>
+            </div>
+            <div ng-show="country.isMistake">
+                <p class="alert alert-danger">Sorry, but you can not redact clubs now. Try to reload page</p>
+            </div>
+            <div class="row">
+                <div class="col-sm-8 dlc-slide-animation" data-slide-time="350" ng-show="actions.isNeedToShowForm" ng-controller="TopScorerActionController">
+                    <div>
+                        <p id="formMessage"></p>
+                        <p ng-show="addProcess.beforeSendMistake" class="alert alert-warning">You have to complete all required fields.</p>
+                    </div>
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <h4>Enter data:</h4>
+                        </div>
+                        <div class="panel-body">
+                            <form name="addForm" class="form-horizontal" reactive-form ng-submit="actionPlayer(addForm)"
+                                  data-message-box="#formMessage" data-err-block-class="help-block-error"
+                                  data-action-type="addProcess.actionType" data-action-result="addProcess.actionResult" data-clear-form="!actions.isNeedToShowForm"
+                                  data-action-redact="addProcess.redacting">
+                                <div class="form-group" touched-field-view="playerName" data-err-block-class="help-block-error">
+                                    <label for="addPlayerName" class="col-sm-2 control-label">Name</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" id="addPlayerName" name="playerName" class="form-control dlc-not-redacting" ng-model="playerToAdd.name" placeholder="Player name"
+                                               ng-model-options="{ updateOn: 'blur' }" ng-pattern="/^[a-z][a-z.]+(\s[a-z][a-z.]+)*$/i" required />
+                                    </div>
+                                    <div class="col-sm-offset-2 col-sm-10 help-block help-block-error">
+                                        <p ng-show="addForm.playerName.$error.pattern">The name of the player must begin with a letter and may include characters, dots, spaces</p>
+                                        <p ng-show="addForm.playerName.$error.required">The field is required</p>
+                                    </div>
+                                </div>
+                                <div class="form-group" touched-field-view="playerClub" data-err-block-class="help-block-error">
+                                    <label for="addPlayerClub" class="col-sm-2 control-label">Club</label>
+                                    <div class="col-sm-10">
+                                        <select id="addPlayerClub" name="playerClub" ng-model="playerToAdd.clubValue" class="form-control" required>
+                                            <option ng-repeat="club in $parent.country.clubs" value="{{$index}}">{{club.name}}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group" touched-field-view="playerGoals" data-err-block-class="help-block-error">
+                                    <label for="addPlayerGoals" class="col-sm-2 control-label">Goals</label>
+                                    <div class="col-sm-10">
+                                        <input type="number" id="addPlayerGoals" name="playerGoals" class="form-control" ng-model="playerToAdd.goals" placeholder="Goals" required
+                                               ng-model-options="{ updateOn: 'blur' }" min="{{baseFormSettings.minGoals}}" max="{{baseFormSettings.maxGoals}}"
+                                               dlc-number="integer" />
+                                    </div>
+                                    <div class="col-sm-offset-2 col-sm-10 help-block help-block-error">
+                                        <p ng-show="addForm.playerGoals.$error.required">The field is required</p>
+                                        <p ng-show="addForm.playerGoals.$error.min">Football player have to score at least {{baseFormSettings.minGoals}} goal to be in the top scorers list</p>
+                                        <p ng-show="addForm.playerGoals.$error.max">It is too many goals. It must be less than {{baseFormSettings.maxGoals}}</p>
+                                        <p ng-show="addForm.playerGoals.$error.number">The number must be an integer</p>
+                                    </div>
+                                </div>
+                                <div>
+                                    <p class="text-info"><span class="text-danger">*&nbsp;</span>All fields are required</p>
+                                </div>
+                                <div class="form-group text-center">
+                                    <div ng-hide="addProcess.isActionForm">
+                                        <button class="btn btn-default-dlc">Go</button>
+                                        <button type="button" class="btn btn-danger" ng-click="clearPlayerForm()">Cancel</button>
+                                    </div>
+                                    <div ng-show="addProcess.isActionForm" class="text-primary">
+                                        <i class="fa fa-cog fa-spin fa-3x"></i>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div ng-hide="topScorers.showLoading" class="row">
+        <div class="col-md-9">
+            <div ng-show="topScorers.isEmpty">
+                <p class="alert alert-warning">
+                    There is no top scorers in that country now.
+                </p>
+            </div>
+            <div ng-show="topScorers.isResult">
+                <table class="table table-bordered top-scorers-table" actions-club-view=".top-scorers-table .action-player-buttons"
+                       data-process="actions.isActionProcess" data-type="actions.typeAction" data-index="actions.indexAction"
+                       data-children="button" data-base-class-part="type-action" data-is-action="actions.isActionProcess">
+                    <thead class="bg-primary">
+                    <tr dlc-sort="topScorers.currentSort">
+                        <th>#</th>
+                        <th class="dlc-sort-item" data-sort-value="name">Player</th>
+                        <th class="hidden-sxs">Club</th>
+                        <th class="hidden-sxs">Age</th>
+                        <th class="dlc-sort-item" data-sort-value="goals">Goals</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody back-to-top-bottom="400" data-selector-class="btn-redact" data-delay="300">
+                    <tr ng-repeat="player in topScorers.values | orderBy:topScorers.currentSort">
+                        <td ng-bind="$index + 1"></td>
+                        <td>
+                            <strong ng-bind="player.name"></strong>
+                        </td>
+                        <td class="hidden-sxs">
+                            <a href="#/country/{{country.name|urlLike}}/teams/{{player.clubName|urlLike}}/players" class="dlc-link" ng-bind="player.clubName"></a>
+                        </td>
+                        <td class="hidden-sxs" ng-bind="player.age"></td>
+                        <td ng-bind="player.goals"></td>
+                        <td>
+                            <div class="action-player-buttons">
+                                <button class="btn btn-primary btn-sm btn-redact" ng-click="redactPlayer(player, $index)">
+                                    <i class="fa fa-pencil"></i>
+                                </button>
+                                <button class="btn btn-danger btn-sm" ng-click="confirmingDeletionPlayer(player, $index)">
+                                    <i class="fa fa-times"></i>
+                                </button>
+                            </div>
+                            <div class="type-action-redact">
+                                <button class="btn btn-success btn-sm" disabled>redacting</button>
+                            </div>
+                            <div class="type-action-delete">
+                                <button class="btn btn-danger btn-sm" disabled>deleting</button>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div ng-show="topScorers.isMistake">
+                <p class="alert alert-danger" ng-bind="topScorers.mistakeMessage"></p>
+            </div>
+        </div>
+        <div class="col-md-3" ng-hide="topScorers.showLoading">
+            <div class="row" ng-hide="topScorers.isMistake">
+                <div class="col-sm-12 dlc-main-action-button-bl">
+                    <a href="#/country/{{country.name|urlLike}}/teams" class="btn btn-default-dlc"
+                       bs-tooltip title="View teams table" data-placement="right">
+                        <i class="fa fa-eye"></i>&nbsp;View teams
+                    </a>
+                </div>
+                <div class="col-sm-12 hidden-xs">
+                    <div class="bg-primary additional-info-bl">
+                        <h4>Current information</h4>
+                        <p>
+                            Here you can see an information about current season.
+                            <span ng-hide="!topScorers.values.length">
+                                You can see that <strong>{{topScorers.values[0].name}}</strong> is now in the lead.
+                            </span>
+                        </p>
+                        <p>
+                            It should also be noted that here you can see <strong>{{topScorers.values.length}}</strong> top scorers.
+                        </p>
+                    </div>
+                    <div class="bg-primary additional-info-bl">
+                        <h4>Additional information</h4>
+                        <p>
+                            You can see table of the teams.
+                            To do this, you should push 'view teams' button.
+                        </p>
+                        <p>
+                            Also you can see the the information about club and its players.
+                            To do this, you should push on the country.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal window -->
+    <dlc-modal data-show="confirmingDeleteWindow.isShown" class="ng-hide" data-modal-title="Confirm the deletion of the player from top scorers" data-close="cancelDeletingPlayer()">
+        <p>Do you really want to delete this top scorer?</p>
+        <p class="small">Note that this action will only set count of goals to 0 for this player, but not delete him at all</p>
+        <div class="modal-buttons">
+            <div ng-hide="actions.isDeletingProcess">
+                <button type="button" ng-click="deletePlayer()" class="btn btn-default btn-sm dlc-action-button">
+                    <i class="fa fa-check"></i>&nbsp;
+                    OK
+                </button>
+                <button type="button" ng-click="cancelDeletingPlayer()" class="btn btn-danger btn-sm dlc-action-button">
+                    <i class="fa fa-times"></i>&nbsp;
+                    Cancel
+                </button>
+            </div>
+            <div ng-show="actions.isDeletingProcess">
+                <div ng-class="{loading: true, active: actions.isDeletingProcess}">
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                </div>
+            </div>
+        </div>
+    </dlc-modal>
+
+</div>

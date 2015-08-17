@@ -1,0 +1,93 @@
+<div class="container dlc-main-container">
+    <div ng-show="clubPrepare.showLoading" class="dlc-main-load">
+        <p class="text-center text-primary">
+            <i class="fa fa-cog fa-spin fa-3x"></i>
+        </p>
+    </div>
+    <div>
+        <h3>{{club.name}}</h3>
+        <h4>Season Statistics</h4>
+        <div class="row">
+            <div ng-show="clubPrepare.isMistake" class="col-sm-7">
+                <p class="alert alert-danger" ng-bind="clubPrepare.mistakeMessage"></p>
+            </div>
+            <div ng-show="clubPrepare.isResult" class="col-sm-7">
+                <div class="bg-inverse-dlc dlc-main-info-bl">
+                    <h4>Team statistic</h4>
+                    <table class="table season-stat-table">
+                        <tr>
+                            <td>Games:</td>
+                            <td class="text-right">
+                                <span class="text-info"><strong>{{club.games}}</strong></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Wins:</td>
+                            <td class="text-right">
+                                <span class="text-info"><strong>{{club.wins}}</strong></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Draws:</td>
+                            <td class="text-right">
+                                <span class="text-info"><strong>{{club.draws}}</strong></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Defeats:</td>
+                            <td class="text-right">
+                                <span class="text-info"><strong>{{club.defeats}}</strong></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Points:</td>
+                            <td class="text-right">
+                                <span class="text-info"><strong>{{club.points}}</strong></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Goals scored:</td>
+                            <td class="text-right">
+                                <span class="text-info"><strong>{{club.gs}}</strong></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Goals against:</td>
+                            <td class="text-right">
+                                <span class="text-info"><strong>{{club.ga}}</strong></span>
+                            </td>
+                        </tr>
+                    </table>
+                    <div>
+                        <a href="#/country/{{club.country|urlLike}}/teams" class="btn btn-default-dlc">All teams</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-5">
+                <div ng-show="players.isEmpty" class="bg-primary additional-info-bl">
+                    <p>
+                        Now there is no information about players of the club.
+                    </p>
+                    <p>
+                        You can add player to the club.
+                        To do this push <a href="#/country/{{club.country|urlLike}}/teams/{{club.name|urlLike}}/players" class="dlc-link dlc-link-inverse">this</a>
+                    </p>
+                </div>
+                <div ng-show="players.isResult" class="bg-primary additional-info-bl">
+                    <h4>Top {{players.topCount}} players</h4>
+                    <table class="table season-stat-table">
+                        <tr ng-repeat="player in players.values">
+                            <td>{{player.name}}</td>
+                            <td class="text-right">
+                                <span><strong>{{player.rating}}</strong></span>
+                            </td>
+                        </tr>
+                    </table>
+                    <p class="text-right">
+                        <a href="#/country/{{club.country|urlLike}}/teams/{{club.name|urlLike}}/players" class="btn btn-warning">Line-up</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

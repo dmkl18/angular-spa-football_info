@@ -1,0 +1,235 @@
+<div class="container dlc-main-container">
+    <div ng-show="clubs.showLoading" class="dlc-main-load">
+        <p class="text-center text-primary">
+            <i class="fa fa-cog fa-spin fa-3x"></i>
+        </p>
+    </div>
+    <div class="row">
+        <div ng-hide="clubs.showLoading" class="col-md-9">
+            <div ng-show="clubs.isEmpty">
+                <p class="alert alert-warning">
+                    Now there is no clubs for that country.
+                </p>
+            </div>
+            <div ng-show="clubs.isMistake">
+                <p class="alert alert-danger" ng-bind="clubs.mistakeMessage"></p>
+            </div>
+            <div ng-show="country.isMistake">
+                <p class="alert alert-warning">
+                    Sorry, but some features are not available now.
+                    For example, you can not see which clubs will play in Champions League.
+                    Try to reload the page.
+                </p>
+            </div>
+            <div ng-show="clubs.isResult" back-to-top-bottom="400" data-selector-class="btn-redact" data-delay="300" data-bottom="true">
+                <table class="table table-bordered clubs-table" actions-club-view=".clubs-table .action-club-buttons"
+                       data-process="clubActions.isActionProcess" data-type="clubActions.typeAction" data-index="clubActions.indexAction"
+                       data-children="button" data-base-class-part="type-action">
+                    <thead class="bg-primary">
+                    <tr>
+                        <th>#</th>
+                        <th>Club</th>
+                        <th class="hidden-sxs">Games</th>
+                        <th class="hidden-sxs">Wins</th>
+                        <th class="hidden-xs">Draws</th>
+                        <th class="hidden-xs">Defeats</th>
+                        <th class="hidden-xs">GS</th>
+                        <th class="hidden-xs">GA</th>
+                        <th>Points</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody update-clubs-table-view="tr" data-chl="{{country.chL}}" data-el="{{country.euL}}" data-club-remove="{{country.maxCountClubs - country.clubsToRemove}}" data-table-result="clubs.isResult">
+                    <tr ng-repeat="club in clubs.values">
+                        <td ng-bind="$index + 1"></td>
+                        <td>
+                            <a href="#/country/{{country.name|urlLike}}/teams/{{club.name|urlLike}}" class="dlc-link" ng-bind="club.name"></a>
+                        </td>
+                        <td class="hidden-sxs" ng-bind="club.games"></td>
+                        <td class="hidden-sxs" ng-bind="club.wins"></td>
+                        <td class="hidden-xs" ng-bind="club.draws"></td>
+                        <td class="hidden-xs" ng-bind="club.defeats"></td>
+                        <td class="hidden-xs" ng-bind="club.gs"></td>
+                        <td class="hidden-xs" ng-bind="club.ga"></td>
+                        <td ng-bind="club.points"></td>
+                        <td>
+                            <div class="action-club-buttons">
+                                <button class="btn btn-primary btn-sm btn-redact" ng-click="redactClub(club, $index)">
+                                    <i class="fa fa-pencil"></i>
+                                </button>
+                                <button class="btn btn-danger btn-sm" ng-click="confirmingDeletionClub(club, $index)">
+                                    <i class="fa fa-times"></i>
+                                </button>
+                            </div>
+                            <div class="type-action-redact">
+                                <button class="btn btn-success btn-sm" disabled>redacting</button>
+                            </div>
+                            <div class="type-action-delete">
+                                <button class="btn btn-danger btn-sm" disabled>deleting</button>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div ng-hide="clubs.showLoading" class="col-md-3">
+            <div class="row" ng-hide="clubs.isMistake">
+                <div class="col-sm-12 col-xs-6 dlc-main-action-button-bl">
+                    <button type="button" class="btn btn-default-dlc"
+                            ng-click="showAddClub()" ng-hide="clubActions.isActionProcess"
+                            back-to-top-bottom="400" data-delay="300" data-bottom="true" data-is-stop-cond="true" data-stop="checkMaxClubsCount()">
+                        <i class="fa fa-plus"></i>&nbsp;Add club
+                    </button>
+                </div>
+                <div class="col-sm-12 col-xs-6 dlc-main-action-button-bl">
+                    <a href="#/country/{{country.name|urlLike}}/top-scorers" class="btn btn-warning">
+                        <i class="fa fa-eye"></i>&nbsp;Top scorers
+                    </a>
+                </div>
+                <div class="col-sm-12 hidden-xs">
+                    <div class="bg-primary additional-info-bl">
+                        <h4>Current information</h4>
+                        <p>
+                            Here you can see an information about current season.
+                            You can see that {{clubs.values[0].name}} is now in the lead.
+                        </p>
+                        <p>
+                            It should also be noted that first <strong>{{country.chL}}</strong> clubs will get into the Champions League.
+                            Also <strong>{{country.euL - country.chL}}</strong> clubs will get into the Europe League.
+                        </p>
+                    </div>
+                    <div class="bg-primary additional-info-bl">
+                        <h4>Additional information</h4>
+                        <p>
+                            You can see top scorers list.
+                            To do this, you should push top scorers button.
+                        </p>
+                        <p>
+                            Also you can see the the information about club and its players.
+                            To do this, you should push on the country.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-9 dlc-slide-animation" data-slide-time="350" ng-show="clubActions.isNeedToShowForm">
+            <div class="row">
+                <div class="col-sm-8" ng-controller="TeamsActionController">
+                    <div>
+                        <p id="clubMessage"></p>
+                        <p ng-show="addProcess.beforeSendMistake" class="alert alert-warning">You have to complete all required fields</p>
+                    </div>
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <p><strong>Enter data:</strong></p>
+                        </div>
+                        <div class="panel-body">
+                            <form name="addForm" class="form-horizontal" reactive-form ng-submit="actionClub(addForm)"
+                                  data-message-box="#clubMessage" data-err-block-class="help-block-error"
+                                  data-action-type="addProcess.actionType" data-action-result="addProcess.actionResult" data-clear-form="!clubActions.isNeedToShowForm">
+                                <div class="form-group" touched-field-view="clubName" data-err-block-class="help-block-error" data-check-ajax-view="true">
+                                    <label for="addClubName" class="col-sm-2 control-label">Name</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" id="addClubName" name="clubName" class="form-control" ng-model="clubToAdd.name" placeholder="Club name"
+                                               ng-model-options="{ updateOn: 'blur' }" ng-pattern="/^[a-z]+[a-z0-9]*(\s[a-z0-9][a-z0-9]+)*$/i" required
+                                               club-name data-country="country.name" data-redact-club="addProcess.redactClubName" />
+                                    </div>
+                                    <div ng-show="addForm.clubName.$pending.clubName" class="col-sm-offset-2 col-sm-10 help-block">
+                                        <p>Checking if this name is available...</p>
+                                    </div>
+                                    <div class="col-sm-offset-2 col-sm-10 help-block help-block-error">
+                                        <p ng-show="addForm.clubName.$error.pattern">The name of the club must begin with a letter and may include characters, numbers, spaces</p>
+                                        <p ng-show="addForm.clubName.$error.required">The field is required</p>
+                                        <p ng-show="addForm.clubName.$error.clubName">A club with that name is already exists!</p>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-3">
+                                        <input type="number" class="form-control" ng-model="clubToAdd.games" ng-blur="createDefeatsAndPointsIfNeed()" placeholder="Games" min="0" max="{{$parent.country.maxGames}}" required />
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <input type="number" class="form-control" ng-model="clubToAdd.wins" ng-blur="createDefeatsAndPointsIfNeed()" placeholder="Wins" min="0" max="{{$parent.country.maxGames}}" required />
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <input type="number" class="form-control" ng-model="clubToAdd.draws" ng-blur="createDefeatsAndPointsIfNeed()" placeholder="Draws" min="0" max="{{$parent.country.maxGames}}" required />
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <input type="number" class="form-control" ng-model="clubToAdd.defeats" placeholder="Defeats" min="0" max="{{$parent.country.maxGames}}" required readonly
+                                               bs-tooltip data-title="It will be calculated automatically" data-placement="top" />
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-3">
+                                        <input type="number" class="form-control" ng-model="clubToAdd.gs" placeholder="GS" min="0" required />
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <input type="number" class="form-control" ng-model="clubToAdd.ga" placeholder="CA" min="0" required />
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <input type="number" class="form-control" ng-model="clubToAdd.points" placeholder="Points" min="0" max="{{$parent.country.maxGames*3}}" required readonly
+                                               bs-tooltip data-title="It will be calculated automatically" data-placement="top" />
+                                    </div>
+                                </div>
+                                <div>
+                                    <p class="text-info"><span class="text-danger">*&nbsp;</span>All fields are required</p>
+                                </div>
+                                <div class="form-group text-center">
+                                    <div ng-hide="addProcess.isActionForm">
+                                        <button class="btn btn-default-dlc">Go</button>
+                                        <button type="button" class="btn btn-danger" ng-click="clearClubForm()">Cancel</button>
+                                    </div>
+                                    <div ng-show="addProcess.isActionForm" class="text-primary">
+                                        <i class="fa fa-cog fa-spin fa-3x"></i>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal window -->
+    <dlc-modal data-show="confirmingDeleteWindow.isShown" class="ng-hide" data-modal-title="Confirm the deletion of the club" data-close="cancelDeletingClub()">
+        <p>Do you really want to delete this club?</p>
+        <div class="modal-buttons">
+            <div ng-hide="clubActions.isDeletingProcess">
+                <button type="button" ng-click="deleteClub()" class="btn btn-default dlc-action-button">
+                    <i class="fa fa-check"></i>&nbsp;
+                    OK
+                </button>
+                <button type="button" ng-click="cancelDeletingClub()" class="btn btn-danger dlc-action-button">
+                    <i class="fa fa-times"></i>&nbsp;
+                    Cancel
+                </button>
+            </div>
+            <div ng-show="clubActions.isDeletingProcess">
+                <div ng-class="{loading: true, active: clubActions.isDeletingProcess}">
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                </div>
+            </div>
+        </div>
+    </dlc-modal>
+
+    <dlc-modal data-show="okMaxClubMessage.isShown" class="ng-hide" data-modal-title="Max count clubs is reached" data-close="okMaxClubMessage.close()">
+        <p>You have already added max count of clubs - {{country.maxCountClubs}}</p>
+        <div class="modal-buttons">
+            <div class="text-center">
+                <button type="button" ng-click="okMaxClubMessage.close()" class="btn btn-default">
+                    <i class="fa fa-check"></i>&nbsp;
+                    OK
+                </button>
+            </div>
+        </div>
+    </dlc-modal>
+
+</div>
