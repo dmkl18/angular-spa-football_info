@@ -59,7 +59,8 @@
                                         <p ng-show="addForm.playerGoals.$error.required">The field is required</p>
                                         <p ng-show="addForm.playerGoals.$error.min">Football player have to score at least {{baseFormSettings.minGoals}} goal to be in the top scorers list</p>
                                         <p ng-show="addForm.playerGoals.$error.max">It is too many goals. It must be less than {{baseFormSettings.maxGoals}}</p>
-                                        <p ng-show="addForm.playerGoals.$error.number">The number must be an integer</p>
+                                        <p ng-show="addForm.playerGoals.$error.number">It must be a number</p>
+                                        <p ng-show="addForm.playerGoals.$error.dlcNumber">It must be an integer</p>
                                     </div>
                                 </div>
                                 <div>

@@ -1,9 +1,9 @@
 angular.module("myApp")
     .controller("CountriesController", CountriesController);
 
-CountriesController.$inject = ["$scope", "$routeParams", "countryService", "fromUrlToStringFilter"];
+CountriesController.$inject = ["$scope", "$routeParams", "$location", "countryService", "fromUrlToStringFilter"];
 
-function CountriesController($scope, $routeParams, countryService, fromUrlToStringFilter) {
+function CountriesController($scope, $routeParams, $location, countryService, fromUrlToStringFilter) {
     "use strict";
 
     var currentCountry;
@@ -13,6 +13,7 @@ function CountriesController($scope, $routeParams, countryService, fromUrlToStri
     };
 
     $scope.isCurrentCountry = isCurrentCountry;
+    $scope.isCurrentCountryAndInPath = isCurrentCountryAndInPath;
 
     $scope.$on("$routeChangeSuccess", function(event, next, current) {
         setCurrentCountry(next.params.country);
@@ -44,6 +45,10 @@ function CountriesController($scope, $routeParams, countryService, fromUrlToStri
 
     function isCurrentCountry(country) {
         return currentCountry !== undefined && country === currentCountry;
+    }
+
+    function isCurrentCountryAndInPath(country) {
+        return $location.path().indexOf("country") !== -1 && isCurrentCountry(country);
     }
 
 }

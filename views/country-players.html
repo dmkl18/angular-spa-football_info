@@ -1,0 +1,34 @@
+<div class="container dlc-main-container">
+    <h3>{{players.country}}</h3>
+    <h4>Players of the Championship</h4>
+    <div class="dlc-main-load" ng-show="playersPrepare.showLoading">
+        <div class="text-center text-primary">
+            <i class="fa fa-cog fa-spin fa-3x"></i>
+        </div>
+    </div>
+    <div ng-show="playersPrepare.isEmpty">
+        <p class="alert alert-warning" ng-bind="playersPrepare.emptyMessage"></p>
+    </div>
+    <div ng-show="playersPrepare.isMistake">
+        <p class="alert alert-danger" ng-bind="playersPrepare.mistakeMessage"></p>
+    </div>
+    <div ng-show="playersPrepare.isResult" ng-class="{plrstop:players.page==1,plrsbottom:players.page==players.pages}">
+        <div ng-repeat="pls in players.values track by $index" class="row">
+            <div ng-repeat="player in pls track by $index" class="col-sm-6 col-md-3">
+                <div class="panel panel-primary country-player-panel">
+                    <div class="panel-heading">
+                        <h4 class="panel-title" ng-bind="player.name"></h4>
+                    </div>
+                    <div class="panel-body">
+                        <p>Rating: <span class="text-info" ng-bind="player.rating"></span></p>
+                        <p>Goals: <span class="text-info" ng-bind="player.goals"></span></p>
+                        <p>Passes: <span class="text-info" ng-bind="player.passes"></span></p>
+                        <p>Position: <span class="text-info" ng-bind="player.position"></span></p>
+                        <p>Club: <a ng-href="#/country/{{players.country|urlLike}}/teams/{{player.club|urlLike}}/players" class="dlc-link" ng-bind="player.club"></a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div dlc-pagination="players.pages" data-page="players.page"></div>
+    </div>
+</div>

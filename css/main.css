@@ -406,9 +406,18 @@ thead, .panel-heading h4 {
     box-shadow: inset 0 0 5px white;
 }
 
-.panel.player-panel, .panel.player-panel .panel-heading {
+.panel.player-panel, .panel.player-panel .panel-heading, .panel.country-player-panel, .panel.country-player-panel .panel-heading {
     border: none;
 }
+
+.panel.country-player-panel {
+    -webkit-transition: box-shadow 0.3s ease;
+            transition: box-shadow 0.3s ease;
+}
+
+    .panel.country-player-panel:hover {
+        box-shadow: 0 0 10px gray;
+    }
 
 .additional-info-bl {
     margin-bottom: 25px;
@@ -491,6 +500,46 @@ thead, .panel-heading h4 {
     perspective: 700px;
     -webkit-perspective-origin: -40% 30%;
             perspective-origin: -40% 30%;
+}
+
+.plrstop .row:first-of-type .col-md-3:nth-of-type(n):nth-of-type(-n+3) .country-player-panel .panel-heading {
+    background: orange;
+    color: black;
+    font-weight: bold;
+}
+
+.plrstop .row:first-of-type .col-md-3:nth-of-type(n):nth-of-type(-n+3) .country-player-panel .panel-body {
+    background: #FFEBCD;
+}
+
+/* pagination */
+
+.dlc-pagination.dlc-pagination .active {
+    background: #337ab7;
+    color: white;
+    opacity: 1;
+}
+
+.dlc-pagination.dlc-pagination a, .dlc-pagination.dlc-pagination button {
+    border-color: white;
+}
+
+.btn-group .fromto {
+    position: relative;
+    float:left;
+}
+
+.fromto {
+    display: inline-block;
+    padding: 6px 12px;
+    margin-bottom: 0;
+    font-size: 14px;
+    text-align: center;
+    line-height: 1.42857143;
+    vertical-align: middle;
+    background: white;
+    color: black;
+    border: 1px solid white;
 }
 
 /* Footer */

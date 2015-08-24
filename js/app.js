@@ -19,6 +19,12 @@ angular.module("myApp", ["ngRoute", "ngAnimate"])
         }).when("/home", {
             templateUrl: "views/home.html",
             controller: "CountriesController",
+        }).when("/country/:country/players", {
+            templateUrl: "views/country-players.html",
+            controller: "CountryPlayersController",
+        }).when("/country/:country/players/page/:page", {
+            templateUrl: "views/country-players.html",
+            controller: "CountryPlayersController",
         }).when("/players/free", {
             templateUrl: "views/players.html",
             controller: "PlayersController",

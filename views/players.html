@@ -93,7 +93,8 @@
                                             <p ng-show="addForm.playerAge.$error.required">The field is required</p>
                                             <p ng-show="addForm.playerAge.$error.min">You can not add players who are younger then {{baseFormSettings.minAge}}</p>
                                             <p ng-show="addForm.playerAge.$error.max">This player is too old to play in the professional football. His age must be less than {{baseFormSettings.maxAge}}</p>
-                                            <p ng-show="addForm.playerAge.$error.number">It must be integer</p>
+                                            <p ng-show="addForm.playerPasses.$error.number">It must be number</p>
+                                            <p ng-show="addForm.playerAge.$error.dlcNumber">It must be integer</p>
                                         </div>
                                     </div>
                                 </div>
@@ -110,7 +111,8 @@
                                             <p ng-show="addForm.playerGoals.$error.required">The field is required</p>
                                             <p ng-show="addForm.playerGoals.$error.min">Minimum is {{baseFormSettings.minGoals}}</p>
                                             <p ng-show="addForm.playerGoals.$error.max">It is too many goals. It must be less than {{baseFormSettings.maxGoals}}</p>
-                                            <p ng-show="addForm.playerGoals.$error.number">It must be integer</p>
+                                            <p ng-show="addForm.playerPasses.$error.number">It must be number</p>
+                                            <p ng-show="addForm.playerGoals.$error.dlcNumber">It must be integer</p>
                                         </div>
                                     </div>
                                     <div class="form-group" touched-field-view="playerPasses" data-err-block-class="help-block-error">
@@ -125,7 +127,8 @@
                                             <p ng-show="addForm.playerPasses.$error.required">The field is required</p>
                                             <p ng-show="addForm.playerPasses.$error.min">Minimum is {{baseFormSettings.minPasses}}</p>
                                             <p ng-show="addForm.playerPasses.$error.max">It is too many passes. It must be less than {{baseFormSettings.maxPasses}}</p>
-                                            <p ng-show="addForm.playerPasses.$error.number">It must be integer</p>
+                                            <p ng-show="addForm.playerPasses.$error.number">It must be number</p>
+                                            <p ng-show="addForm.playerPasses.$error.dlcNumber">It must be integer</p>
                                         </div>
                                     </div>
                                     <div class="form-group" touched-field-view="playerRating" data-err-block-class="help-block-error">
@@ -134,13 +137,11 @@
                                         </div>
                                         <div>
                                             <input type="text" id="addPlayerRating" name="playerRating" class="form-control" ng-model="playerToAdd.rating" placeholder="Rating" required
-                                                   ng-model-options="{ updateOn: 'blur' }" min="{{baseFormSettings.minRating}}" max="{{baseFormSettings.maxRating}}" dlc-number="float"  />
+                                                   ng-model-options="{ updateOn: 'blur' }" min="{{baseFormSettings.minRating}}" max="{{baseFormSettings.maxRating}}" dlc-number="float" data-min-max="true" />
                                         </div>
                                         <div class="help-block help-block-error">
                                             <p ng-show="addForm.playerRating.$error.required">The field is required</p>
-                                            <p ng-show="addForm.playerRating.$error.min">Minimum is {{baseFormSettings.minRating}}</p>
-                                            <p ng-show="addForm.playerRating.$error.max">Rating can not be more than {{baseFormSettings.maxRating}}</p>
-                                            <p ng-show="addForm.playerRating.$error.number">It must be float</p>
+                                            <p ng-show="addForm.playerRating.$error.dlcNumber">Rating must be float and minimum is {{baseFormSettings.minRating}} and maximum is {{baseFormSettings.maxRating}}</p>
                                         </div>
                                     </div>
                                 </div>

@@ -37,6 +37,30 @@ function playerService($q, $http) {
         return deffered.promise;
     };
 
+    this.getAllByPage = function(country, page, countOnPage) {
+        var deffered = $q.defer(),
+            config = {
+                method: "GET",
+                url: "lib/playersByPage.php",
+                params: {
+                    country: country,
+                    page: page,
+                    countOnPage: countOnPage,
+                },
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest",
+                },
+            };
+
+        $http(config).success(function(data, status){
+            data.mistake ? deffered.reject(data, status) : deffered.resolve(data);
+        }).error(function(data, status) {
+            deffered.reject(data, status);
+        });
+
+        return deffered.promise;
+    };
+
     this.add = function(player) {
         var deffered = $q.defer(),
             config = {

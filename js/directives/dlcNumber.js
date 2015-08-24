@@ -8,8 +8,8 @@ function dlcNumberDirective() {
 
     "use strict";
 
-    var INTEGER_REGEX = /^[1-9]\d*$/,
-        FLOAT_REGEX = /^0|(?:[1-9]\d*)(?:\.\d+)?$/;
+    var INTEGER_REGEX = /^-?[1-9]\d*$/,
+        FLOAT_REGEX = /^-?(?:0|[1-9]\d*)(?:\.\d+)?$/;
 
     return {
 
@@ -23,12 +23,16 @@ function dlcNumberDirective() {
 
         link: function($scope, $element, $attrs, ctrl) {
 
+            var minMaxChecking = $attrs["minMax"] === "true";
+
             ctrl.$validators.dlcNumber = function(newValue, oldValue) {
 
                 if(ctrl.$isEmpty(newValue)) {
                     return true;
                 }
-
+                if(minMaxChecking && !minMaxCheck(+newValue)) {
+                    return false;
+                }
                 return $scope.dlcNumber === "integer" ? integer(newValue) : float(newValue);
 
             };
@@ -45,6 +49,15 @@ function dlcNumberDirective() {
                     return true;
                 }
                 return false;
+            }
+
+            function minMaxCheck(value) {
+                var min = +$attrs["min"],
+                    max = +$attrs["max"];
+                if(value < min || value > max) {
+                    return false;
+                }
+                return true;
             }
 
         }
